@@ -4,6 +4,7 @@ import com.dk.springbootwebtutorial.DTO.EmployeeDTO;
 import com.dk.springbootwebtutorial.Entities.EmployeeEntity;
 import com.dk.springbootwebtutorial.Repositories.EmployeeRepository;
 import com.dk.springbootwebtutorial.Services.EmployeeService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,14 +48,14 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<EmployeeDTO> addEmployee(@RequestBody EmployeeDTO inputEmployee){
+    public ResponseEntity<EmployeeDTO> addEmployee(@RequestBody @Valid EmployeeDTO inputEmployee){
 //        inputEmployee.setId(100L);
         EmployeeDTO savedEmployee = employeeService.addEmployee(inputEmployee);
         return new ResponseEntity<>(savedEmployee, HttpStatus.CREATED);
     }
 
     @PutMapping(path = "{employeeId}")
-    public ResponseEntity<EmployeeDTO> updateEmployeeById(@RequestBody EmployeeDTO employeeDTO, @PathVariable Long employeeId){
+    public ResponseEntity<EmployeeDTO> updateEmployeeById(@RequestBody @Valid EmployeeDTO employeeDTO, @PathVariable Long employeeId){
         EmployeeDTO updatedEmployee = employeeService.updateEmployeeById(employeeId,employeeDTO);
         return ResponseEntity.ok(updatedEmployee);
     }

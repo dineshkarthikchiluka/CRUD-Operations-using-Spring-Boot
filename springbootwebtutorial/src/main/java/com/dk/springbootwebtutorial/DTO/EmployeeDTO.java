@@ -1,10 +1,9 @@
 package com.dk.springbootwebtutorial.DTO;
 
+import com.dk.springbootwebtutorial.Annotations.EmployeeValidation;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.*;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -16,12 +15,38 @@ import java.util.Date;
 public class EmployeeDTO {
 
     private Long id;
+
+    @NotBlank(message = "Name of an employee can not be blank")
+    @Size(min = 3,max = 10,message = "Number of characters in the name should be in the range: range[3,10]")
     private String name;
+
+
+    @NotNull(message = "age of an employee can not be null")
+    @Max(value = 80,message = "age of employee can not be greater than 80")
+    @Min(value = 18, message = "age of employee can not be less than 18 ")
     private Integer age;
+
+    @NotBlank(message = "email of an employee can not be blank")
+    @Email(message = "Email should be valid")
     private String email;
+
+    @NotBlank(message = "Role of an employee can not be blank")
+//    @Pattern(regexp = "^(ADMIN|USER)$", message = "Role of an employee can be ADMIN OR USER")
+    @EmployeeValidation
+    private String role; //ADMIN, USER
+
+    @PastOrPresent(message = "Joining date of an employee should not be in future")
     private LocalDate dateOfJoining;
 
+    @NotNull(message = "salary of an employee can not be null")
+    @Positive(message = "salary of an employee can not be negative")
+    @Digits(integer = 6,fraction = 2,message = "The salary can be in the form xxxxxx.yy")
+    @DecimalMin(value = "100.50")
+    @DecimalMax(value = "100000.99")
+    private Double salary;
+
     @JsonProperty("isActive") // Explicitly name the JSON field
+    @AssertTrue(message = "Employee should be active")
     private Boolean isActive; // you can different name also but that belongs to object only, in postman you have to give the name which you have mentioned in JsonProperty
 
 //    public EmployeeDTO(){
