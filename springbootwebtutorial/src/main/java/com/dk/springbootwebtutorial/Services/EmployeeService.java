@@ -3,6 +3,7 @@ package com.dk.springbootwebtutorial.Services;
 import com.dk.springbootwebtutorial.Configs.MapperConfig;
 import com.dk.springbootwebtutorial.DTO.EmployeeDTO;
 import com.dk.springbootwebtutorial.Entities.EmployeeEntity;
+import com.dk.springbootwebtutorial.Exceptions.ResourceNotFoundException;
 import com.dk.springbootwebtutorial.Repositories.EmployeeRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -92,24 +93,21 @@ public class EmployeeService {
 
     }
 
-    public boolean isExists(Long employeeId){
-        return employeeRepository.existsById(employeeId);
+    public void isExists(Long employeeId){
+        boolean exists =  employeeRepository.existsById(employeeId);
+        if(!exists){
+            throw new ResourceNotFoundException("Employee not found with id "+employeeId);
+        }
     }
 
     public boolean deleteEmployeeById(Long employeeId) {
-        boolean exists = isExists(employeeId);
-        if(!exists){
-            return false;
-        }
+        isExists(employeeId);
         employeeRepository.deleteById(employeeId);
         return true;
     }
 
     public EmployeeDTO updatePartialEmployeeById(Long employeeId, Map<String, Object> updates) {
-        boolean exists = isExists(employeeId);
-        if(!exists){
-            return null;
-        }
+        isExists(employeeId);
         EmployeeEntity employeeEntity = employeeRepository.findById(employeeId).get(); // as you are already checked null or not so you no need to handle optional here instead you can use get()
         updates.forEach((field, value) ->{
             Field fieldToBeUpdated = ReflectionUtils.findField(EmployeeEntity.class,field);

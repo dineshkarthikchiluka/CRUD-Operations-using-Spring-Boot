@@ -2,6 +2,7 @@ package com.dk.springbootwebtutorial.Controllers;
 
 import com.dk.springbootwebtutorial.DTO.EmployeeDTO;
 import com.dk.springbootwebtutorial.Entities.EmployeeEntity;
+import com.dk.springbootwebtutorial.Exceptions.ResourceNotFoundException;
 import com.dk.springbootwebtutorial.Repositories.EmployeeRepository;
 import com.dk.springbootwebtutorial.Services.EmployeeService;
 import jakarta.validation.Valid;
@@ -10,10 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping(path = "/employees")
@@ -34,12 +32,11 @@ public class EmployeeController {
         Optional<EmployeeDTO> employeeDTO = employeeService.getEmployeeById(Id);
         return employeeDTO
                 .map(employeeDTO1 -> ResponseEntity.ok(employeeDTO1))
-                .orElse(ResponseEntity.notFound().build());
-//        if(employeeDTO == null){
-//            return ResponseEntity.notFound().build();
-//        }
-//        return ResponseEntity.ok(employeeDTO);
+//                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ResourceNotFoundException("Element is not found with id "+Id));
     }
+
+
 
     @GetMapping
     public ResponseEntity<List<EmployeeDTO>> getAllEmployees(@RequestParam(required = false,name="inputAge") Integer age,
@@ -59,6 +56,9 @@ public class EmployeeController {
         EmployeeDTO updatedEmployee = employeeService.updateEmployeeById(employeeId,employeeDTO);
         return ResponseEntity.ok(updatedEmployee);
     }
+
+
+
 
     @DeleteMapping(path = "{employeeId}")
     public ResponseEntity<Boolean> deleteEmployeeById(@PathVariable Long employeeId){
